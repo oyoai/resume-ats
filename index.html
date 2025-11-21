@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ats-style resume checker</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- pdf.js from cdn -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        // configure pdf.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc =
+          "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+    </script>
+</head>
+<body>
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="brand-mark">
+        <span class="brand-icon">∞</span>
+        <span class="brand-name">resume-ats</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <!-- hero section -->
+    <section class="hero">
+      <h1>is your resume ats-friendly?</h1>
+      <p>
+        a local resume parser that approximates how an applicant tracking system
+        might read and score your pdf. nothing leaves your browser.
+      </p>
+    </section>
+
+    <!-- upload card -->
+    <section class="card upload-card">
+      <h2>upload your resume</h2>
+
+      <p class="upload-subtitle">
+        pdf only for now. maximum size ~5mb. parsing happens entirely in your browser.
+      </p>
+
+      <div class="upload-drop">
+        <p class="upload-text">drag & drop your pdf here, or</p>
+
+        <label for="file-input" class="upload-button">
+          choose file
+        </label>
+        <input type="file" id="file-input" accept="application/pdf">
+
+        <p class="privacy-note">
+          privacy: no files are sent to a server. everything runs locally using pdf.js.
+        </p>
+      </div>
+
+      <!-- pdf preview -->
+      <div id="pdf-preview-container" class="pdf-preview hidden">
+        <div class="pdf-preview-header">
+          <span id="pdf-filename"></span>
+          <button id="pdf-remove-btn" type="button" class="pdf-remove-btn">×</button>
+        </div>
+        <div class="pdf-preview-body">
+          <embed id="pdf-embed" type="application/pdf">
+        </div>
+      </div>
+
+      <!-- matching options -->
+      <div class="options-row">
+        <label class="checkbox-inline">
+          <input type="checkbox" id="toggle-profile">
+          enable job profile matching
+        </label>
+        <label class="checkbox-inline">
+          <input type="checkbox" id="toggle-jd">
+          enable job description matching
+        </label>
+      </div>
+
+      <div id="profile-input-block" class="optional-block hidden">
+        <label class="field-label" for="profile-select">job profile</label>
+        <select id="profile-select">
+          <option value="none" selected>no specific profile</option>
+          <option value="data_ml">junior data / ml</option>
+          <option value="software">junior software engineer</option>
+          <option value="general">general professional</option>
+        </select>
+      </div>
+
+      <div id="jd-input-block" class="optional-block hidden">
+        <label class="field-label" for="jd-input">job description</label>
+        <textarea id="jd-input" rows="6"
+          placeholder="paste the job description here if you want jd-specific matching."></textarea>
+      </div>
+
+      <div class="upload-actions">
+        <button id="analyze-btn" disabled>analyze resume</button>
+        <span id="status" class="status"></span>
+      </div>
+    </section>
+
+    <!-- results area -->
+    <section id="results" class="results-shell hidden">
+      <div class="results-grid">
+        <!-- left column: score + summary -->
+        <div class="results-left">
+          <section class="card score-card">
+            <h3>resume score</h3>
+            <div class="score-circle">
+              <div id="score-value" class="score-number">–</div>
+            </div>
+            <p id="score-explanation" class="score-explanation"></p>
+          </section>
+
+          <section class="card summary-card">
+            <h3>summary</h3>
+            <ul id="summary-list" class="summary-list"></ul>
+          </section>
+        </div>
+
+        <!-- right column: detailed parsing -->
+        <div class="results-right">
+          <section class="card">
+            <h3>parsed structure</h3>
+            <div id="parsed-structure"></div>
+          </section>
+
+          <section id="profile-results-section" class="card optional-section hidden">
+            <h3>profile keyword coverage</h3>
+            <table id="keyword-table">
+              <thead>
+                <tr>
+                  <th>category</th>
+                  <th>keyword</th>
+                  <th>present?</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </section>
+
+          <section id="jd-results-section" class="card optional-section hidden">
+            <h3>job description match</h3>
+            <p id="jd-summary"></p>
+            <h4 class="subheading">missing or weak jd keywords</h4>
+            <ul id="jd-missing-list"></ul>
+          </section>
+
+          <section class="card">
+            <h3>raw text seen by the parser</h3>
+            <pre id="raw-text"></pre>
+          </section>
+            <div class="hidden-toggle-row">
+                <label class="checkbox-inline">
+                <input type="checkbox" id="toggle-hidden-chars">
+                <span>show hidden characters</span>
+                </label>
+            </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>built as a portfolio project to explore how ats parsers work under the hood.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
